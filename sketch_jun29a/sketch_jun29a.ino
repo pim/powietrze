@@ -38,6 +38,11 @@
 // SCL - D4
 // SCA - D3
 
+// PMS
+// SET D5
+// RX D7
+// TX D6
+
 #define MYALTITUDE 80
 
 const char* host = "nowytomysl.org";
