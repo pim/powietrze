@@ -38,6 +38,11 @@
 // SCL - D4
 // SCA - D3
 
+// PMS
+// SET D5
+// RX D7
+// TX D6
+
 #define MYALTITUDE 80
 
 const char* host = "nowytomysl.org";
@@ -79,7 +84,7 @@ DHT dht(DHTPIN, DHTTYPE);
 #define PMS_CHECKSUM_LOW 23
 
 //define your default values here, if there are different values in config.json, they are overwritten.
-char device_id[40] = "7"; //monitoring device ID, used for identification
+char device_id[40] = "8"; //monitoring device ID, used for identification
 char api_endpoint[129] = "http://nowytomysl.org"; //air monitoring API URL, default value
 
 //flag for saving data
@@ -384,7 +389,7 @@ void loop() {
   
   // URL z wynikami
   String url = "/upload.php";
-  url += "?device_id=7";
+  url += "?device_id=8";
   url += "&hum_dht=";
   url += h;
   url += "&temp_dht=";
