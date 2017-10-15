@@ -77,9 +77,9 @@ DHT dht(DHTPIN, DHTTYPE);
 #define PMS_CHECKSUM_LOW 23
 
 //define your default values here, if there are different values in config.json, they are overwritten.
-char device_id[40] = "xxxxxxxxx"; //monitoring device ID, used for identification
+
+char device_id[40] = "xxxxxxxxx";
 char api_endpoint[129] = "nowytomysl.org"; //air monitoring API URL, default value
-char upload_interval[10] = "0.5"; // how often readings should be uploaded
 
 //flag for saving data
 bool shouldSaveConfig = true;
@@ -147,12 +147,13 @@ void setup()
 
           strcpy(device_id, json["device_id"]);
           strcpy(api_endpoint, json["api_endpoint"]);
-          strcpy(upload_interval, json["upload_interval"]);
 
         } else {
           Serial.println("failed to load json config");
         }
       }
+    } else {
+      Serial.println("no config file!");
     }
   } else {
     Serial.println("failed to mount FS");
@@ -163,7 +164,6 @@ void setup()
   // id/name placeholder/prompt default length
   WiFiManagerParameter custom_device_id("device_id", "Device ID", device_id, 40);
   WiFiManagerParameter custom_api_endpoint("api_endpoint", "API endpoint", api_endpoint, 129);
-  WiFiManagerParameter custom_upload_interval("upload_interval", "Upload interval [mins]", upload_interval, 10);
 
   //WiFiManager
   //Local intialization. Once its business is done, there is no need to keep it around
@@ -178,7 +178,6 @@ void setup()
   //add all your parameters here
   wifiManager.addParameter(&custom_device_id);
   wifiManager.addParameter(&custom_api_endpoint);
-  wifiManager.addParameter(&custom_upload_interval);
 
   //reset settings - for testing
   //wifiManager.resetSettings();
@@ -190,7 +189,7 @@ void setup()
   //sets timeout until configuration portal gets turned off
   //useful to make it all retry or go to sleep
   //in seconds
-  //wifiManager.setTimeout(120);
+  wifiManager.setConfigPortalTimeout(300);
 
   //fetches ssid and pass and tries to connect
   //if it does not connect it starts an access point with the specified name
@@ -218,7 +217,6 @@ void setup()
     JsonObject& json = jsonBuffer.createObject();
     json["device_id"] = device_id;
     json["api_endpoint"] = api_endpoint;
-    json["upload_interval"] = upload_interval;
 
     File configFile = SPIFFS.open("/config.json", "w");
     if (!configFile) {
@@ -290,7 +288,7 @@ void loop() {
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t)) {
     Serial.println("Failed to read from DHT sensor!");
-    return;
+//    return;
   }
 
   Serial.print("Humidity: ");
@@ -437,7 +435,10 @@ void loop() {
   // zwiekszenie wewnetrzengo iteratora
   i++;
 
-  float minutes_upload_interval = atof(upload_interval);
+  int minutes_upload_interval = 5;
+  if (i <= 10) {
+    minutes_upload_interval = 0.5;
+  }
   // delay przed nastepna petla
   delay(minutes_upload_interval * 60 * 1000);
 }
