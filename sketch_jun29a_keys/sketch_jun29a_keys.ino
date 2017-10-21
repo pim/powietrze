@@ -118,6 +118,8 @@ void setup()
 //  Serial.println("WiFi connected");  
 //  Serial.println("IP address: ");
 //  Serial.println(WiFi.localIP());
+  Serial.println("");
+  Serial.println("2017-10-21 - timeout portalu");
 
   pms.begin(PMS_BAUDRATE); // PMS 3003 UART has baud rate 9600
   pinMode(PMS_PIN_SET, OUTPUT);
